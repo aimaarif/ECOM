@@ -317,6 +317,8 @@ def cash_delivery(request):
             cart_products = cart.get_prods
             quantities = cart.get_quants
             totals = cart.cart_total()
+            delivery_charge = cart.delivery_charge()
+            total_with_delivery = cart.total_with_delivery()
 
             # Get Shipping Session Data
             my_shipping = request.session.get('my_shipping')
@@ -395,6 +397,8 @@ def process_payment_order(request):
             cart_products = cart.get_prods
             quantities = cart.get_quants
             totals = cart.cart_total()
+            delivery_charge = cart.delivery_charge()
+            total_with_delivery = cart.total_with_delivery()
 
             # Get Billing Info from the last page
             payment_form = PaymentForm(request.POST, request.FILES)

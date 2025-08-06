@@ -2,7 +2,18 @@ from django.contrib import admin
 from .models import Category, Customer, Product, Order, Profile
 from django.contrib.auth.models import User
 
-admin.site.register(Category)
+class CategoryAdmin(admin.ModelAdmin):
+    list_display = ['name', 'image_preview']
+    search_fields = ['name']
+    
+    def image_preview(self, obj):
+        if obj.image:
+            return f'<img src="{obj.image.url}" style="max-height: 50px; max-width: 50px;" />'
+        return "No image"
+    image_preview.short_description = 'Image Preview'
+    image_preview.allow_tags = True
+
+admin.site.register(Category, CategoryAdmin)
 admin.site.register(Customer)
 admin.site.register(Product)
 admin.site.register(Order)

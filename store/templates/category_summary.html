@@ -2,29 +2,391 @@
 {% block content %}
 
 <!-- Header-->
-        <header class="bg-dark py-5">
-            <div class="container px-4 px-lg-5 my-5">
-                <div class="text-center text-white">
-                    <h1 class="display-4 fw-bolder">Categories</h1>
-                    <p class="lead fw-normal text-white-50 mb-0">Choose Your Category Below...</p>
+<header class="bg-dark py-5">
+    <div class="container px-4 px-lg-5 my-5">
+        <div class="text-center text-white">
+            <h1 class="display-4 fw-bolder">Shop by Category</h1>
+            <p class="lead fw-normal text-white-50 mb-0">Discover amazing products across all categories</p>
+        </div>
+    </div>
+</header>
+
+<!-- Categories Section -->
+<section class="py-5">
+    <div class="container px-4 px-lg-5">
+        <!-- Category Navigation -->
+        <div class="row mb-5">
+            <div class="col-12">
+                <div class="d-flex flex-wrap justify-content-center gap-3">
+                    <a href="#all-products" class="btn btn-secondary btn-lg px-4 py-2 rounded-pill shadow-sm">
+                        <i class="bi bi-grid-3x3-gap me-2"></i>All Products
+                    </a>
+                    {% for category in categories %}
+                    <a href="#category-{{ category.id }}" class="btn btn-outline-secondary btn-lg px-4 py-2 rounded-pill shadow-sm">
+                        <i class="bi bi-tag me-2"></i>{{ category.name }}
+                    </a>
+                    {% endfor %}
                 </div>
             </div>
-        </header>
-
-        <div class="container">
-        	<div class="row">
-        		<center>
-        			<div class="col-8">
-        				<br/><br/>
-                        
-                        {% for category in categories %}
-<h3><a href="{% url 'category' category %}">{{ category }}</a></h3>
-
-                        {% endfor %}
-<br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
-        			</div>
-        		</center>
-        	</div>
         </div>
+
+        <!-- All Products Section -->
+        <div id="all-products" class="mb-5">
+            <div class="row mb-4">
+                <div class="col-12">
+                    <h2 class="text-center mb-4">
+                        <i class="bi bi-star-fill text-warning me-2"></i>
+                        All Products
+                        <i class="bi bi-star-fill text-warning ms-2"></i>
+                    </h2>
+                </div>
+            </div>
+            
+            <div class="row gx-4 gx-lg-5 row-cols-1 row-cols-md-2 row-cols-xl-4 justify-content-center">
+                {% for category in categories %}
+                    {% for product in category.product_set.all %}
+                        {% if product.is_sale %}
+                        <div class="col mb-5">
+                            <div class="card h-100 shadow-sm border-0 rounded-3 product-card">
+                                <!-- Sale badge-->
+                                <div class="badge bg-danger text-white position-absolute" style="top: 0.5rem; right: 0.5rem; font-size: 0.8rem;">
+                                    <i class="bi bi-tag-fill me-1"></i>Sale
+                                </div>
+                                
+                                <!-- Category badge -->
+                                <div class="badge bg-secondary text-white position-absolute" style="top: 0.5rem; left: 0.5rem; font-size: 0.7rem;">
+                                    {{ product.category.name }}
+                                </div>
+
+                                <!-- Product image-->
+                                <div class="product-image-container">
+                                    <img class="card-img-top product-image" src="{{ product.image.url }}" alt="{{ product.name }}" />
+                                    <div class="product-overlay">
+                                        <a href="{% url 'product' product.id %}" class="btn btn-light btn-sm">
+                                            <i class="bi bi-eye me-1"></i>Quick View
+                                        </a>
+                                    </div>
+                                </div>
+                                
+                                <!-- Product details-->
+                                <div class="card-body p-4">
+                                    <div class="text-center">
+                                        <!-- Product name-->
+                                        <h5 class="fw-bolder product-title">{{ product.name }}</h5>
+                                        
+                                        <!-- Sale price display -->
+                                        <div class="d-flex justify-content-center align-items-center mb-2">
+                                            <span class="text-muted text-decoration-line-through me-2">{{ product.price }}pkr</span>
+                                            <span class="text-danger fw-bold fs-5">{{ product.sale_price }}pkr</span>
+                                        </div>
+                                        
+                                        <!-- Rating stars -->
+                                        <div class="d-flex justify-content-center small text-warning mb-2">
+                                            <div class="bi-star-fill"></div>
+                                            <div class="bi-star-fill"></div>
+                                            <div class="bi-star-fill"></div>
+                                            <div class="bi-star-fill"></div>
+                                            <div class="bi-star"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Product actions-->
+                                <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
+                                    <div class="text-center">
+                                        <a class="btn btn-outline-secondary mt-auto w-100" href="{% url 'product' product.id %}">
+                                            <i class="bi bi-cart-plus me-2"></i>View Product
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% else %}
+                        <div class="col mb-5">
+                            <div class="card h-100 shadow-sm border-0 rounded-3 product-card">
+                                <!-- Category badge -->
+                                <div class="badge bg-secondary text-white position-absolute" style="top: 0.5rem; left: 0.5rem; font-size: 0.7rem;">
+                                    {{ product.category.name }}
+                                </div>
+                                
+                                <!-- Product image-->
+                                <div class="product-image-container">
+                                    <img class="card-img-top product-image" src="{{ product.image.url }}" alt="{{ product.name }}" />
+                                    <div class="product-overlay">
+                                        <a href="{% url 'product' product.id %}" class="btn btn-light btn-sm">
+                                            <i class="bi bi-eye me-1"></i>Quick View
+                                        </a>
+                                    </div>
+                                </div>
+                                
+                                <!-- Product details-->
+                                <div class="card-body p-4">
+                                    <div class="text-center">
+                                        <!-- Product name-->
+                                        <h5 class="fw-bolder product-title">{{ product.name }}</h5>
+                                        
+                                        <!-- Product price-->
+                                        <div class="fw-bold fs-5 text-secondary mb-2">{{ product.price }}pkr</div>
+                                        
+                                        <!-- Rating stars -->
+                                        <div class="d-flex justify-content-center small text-warning mb-2">
+                                            <div class="bi-star-fill"></div>
+                                            <div class="bi-star-fill"></div>
+                                            <div class="bi-star-fill"></div>
+                                            <div class="bi-star-fill"></div>
+                                            <div class="bi-star"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Product actions-->
+                                <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
+                                    <div class="text-center">
+                                        <a class="btn btn-outline-secondary mt-auto w-100" href="{% url 'product' product.id %}">
+                                            <i class="bi bi-cart-plus me-2"></i>View Product
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endif %}
+                    {% endfor %}
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Individual Category Sections -->
+        {% for category in categories %}
+        <div id="category-{{ category.id }}" class="mb-5">
+            <div class="row mb-4">
+                <div class="col-12">
+                    <h2 class="text-center mb-4">
+                        <i class="bi bi-collection me-2 text-secondary"></i>
+                        {{ category.name }}
+                        <i class="bi bi-collection ms-2 text-secondary"></i>
+                    </h2>
+                </div>
+            </div>
+            
+            <div class="row gx-4 gx-lg-5 row-cols-1 row-cols-md-2 row-cols-xl-4 justify-content-center">
+                {% for product in category.product_set.all %}
+                    {% if product.is_sale %}
+                    <div class="col mb-5">
+                        <div class="card h-100 shadow-sm border-0 rounded-3 product-card">
+                            <!-- Sale badge-->
+                            <div class="badge bg-danger text-white position-absolute" style="top: 0.5rem; right: 0.5rem; font-size: 0.8rem;">
+                                <i class="bi bi-tag-fill me-1"></i>Sale
+                            </div>
+
+                            <!-- Product image-->
+                            <div class="product-image-container">
+                                <img class="card-img-top product-image" src="{{ product.image.url }}" alt="{{ product.name }}" />
+                                <div class="product-overlay">
+                                    <a href="{% url 'product' product.id %}" class="btn btn-light btn-sm">
+                                        <i class="bi bi-eye me-1"></i>Quick View
+                                    </a>
+                                </div>
+                            </div>
+                            
+                            <!-- Product details-->
+                            <div class="card-body p-4">
+                                <div class="text-center">
+                                    <!-- Product name-->
+                                    <h5 class="fw-bolder product-title">{{ product.name }}</h5>
+                                    
+                                    <!-- Sale price display -->
+                                    <div class="d-flex justify-content-center align-items-center mb-2">
+                                        <span class="text-muted text-decoration-line-through me-2">{{ product.price }}pkr</span>
+                                        <span class="text-danger fw-bold fs-5">{{ product.sale_price }}pkr</span>
+                                    </div>
+                                    
+                                    <!-- Rating stars -->
+                                    <div class="d-flex justify-content-center small text-warning mb-2">
+                                        <div class="bi-star-fill"></div>
+                                        <div class="bi-star-fill"></div>
+                                        <div class="bi-star-fill"></div>
+                                        <div class="bi-star-fill"></div>
+                                        <div class="bi-star"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Product actions-->
+                            <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
+                                <div class="text-center">
+                                    <a class="btn btn-outline-secondary mt-auto w-100" href="{% url 'product' product.id %}">
+                                        <i class="bi bi-cart-plus me-2"></i>View Product
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% else %}
+                    <div class="col mb-5">
+                        <div class="card h-100 shadow-sm border-0 rounded-3 product-card">
+                            <!-- Product image-->
+                            <div class="product-image-container">
+                                <img class="card-img-top product-image" src="{{ product.image.url }}" alt="{{ product.name }}" />
+                                <div class="product-overlay">
+                                    <a href="{% url 'product' product.id %}" class="btn btn-light btn-sm">
+                                        <i class="bi bi-eye me-1"></i>Quick View
+                                    </a>
+                                </div>
+                            </div>
+                            
+                            <!-- Product details-->
+                            <div class="card-body p-4">
+                                <div class="text-center">
+                                    <!-- Product name-->
+                                    <h5 class="fw-bolder product-title">{{ product.name }}</h5>
+                                    
+                                    <!-- Product price-->
+                                    <div class="fw-bold fs-5 text-secondary mb-2">{{ product.price }}pkr</div>
+                                    
+                                    <!-- Rating stars -->
+                                    <div class="d-flex justify-content-center small text-warning mb-2">
+                                        <div class="bi-star-fill"></div>
+                                        <div class="bi-star-fill"></div>
+                                        <div class="bi-star-fill"></div>
+                                        <div class="bi-star-fill"></div>
+                                        <div class="bi-star"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Product actions-->
+                            <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
+                                <div class="text-center">
+                                    <a class="btn btn-outline-secondary mt-auto w-100" href="{% url 'product' product.id %}">
+                                        <i class="bi bi-cart-plus me-2"></i>View Product
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+
+<!-- Custom CSS for enhanced styling -->
+<style>
+    .product-card {
+        transition: all 0.3s ease;
+        overflow: hidden;
+    }
+    
+    .product-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px rgba(0,0,0,0.15) !important;
+    }
+    
+    .product-image-container {
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .product-image {
+        transition: transform 0.3s ease;
+        height: 200px;
+        object-fit: cover;
+    }
+    
+    .product-card:hover .product-image {
+        transform: scale(1.05);
+    }
+    
+    .product-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0,0,0,0.7);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+    
+    .product-card:hover .product-overlay {
+        opacity: 1;
+    }
+    
+    .product-title {
+        font-size: 1rem;
+        line-height: 1.4;
+        min-height: 2.8rem;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+    
+    .btn-outline-secondary:hover {
+        background-color: #0d6efd;
+        border-color: #0d6efd;
+        color: white;
+    }
+    
+    .badge {
+        font-weight: 500;
+    }
+    
+    .bg-gradient-secondary {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+    
+    /* Smooth scrolling for anchor links */
+    html {
+        scroll-behavior: smooth;
+    }
+    
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+        .product-image {
+            height: 150px;
+        }
+        
+        .product-title {
+            font-size: 0.9rem;
+            min-height: 2.5rem;
+        }
+    }
+</style>
+
+<!-- JavaScript for enhanced interactivity -->
+<script>
+    // Add smooth scrolling for category navigation
+    document.addEventListener('DOMContentLoaded', function() {
+        const categoryLinks = document.querySelectorAll('a[href^="#"]');
+        
+        categoryLinks.forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href');
+                const targetElement = document.querySelector(targetId);
+                
+                if (targetElement) {
+                    targetElement.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+        
+        // Add loading animation for product cards
+        const productCards = document.querySelectorAll('.product-card');
+        productCards.forEach((card, index) => {
+            card.style.animationDelay = `${index * 0.1}s`;
+            card.classList.add('animate__animated', 'animate__fadeInUp');
+        });
+    });
+</script>
 
 {% endblock %}

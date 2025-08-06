@@ -38,6 +38,7 @@ post_save.connect(create_profile, sender=User)
 # Categories of Products
 class Category(models.Model):
 	name = models.CharField(max_length=50)
+	image = models.ImageField(upload_to='uploads/categories/', null=True, blank=True, help_text="Upload a category image (optional)")
 
 	def __str__(self):
 		return self.name

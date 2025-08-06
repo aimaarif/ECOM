@@ -93,6 +93,20 @@ class Cart():
 
 		return total
 
+	def delivery_charge(self):
+		"""Calculate delivery charge based on cart total"""
+		total = self.cart_total()
+		
+		if total >= 10000:
+			return 0  # Free delivery
+		elif total >= 5000:
+			return 150  # Half delivery charge
+		else:
+			return 300  # Full delivery charge
+
+	def total_with_delivery(self):
+		"""Get total including delivery charges"""
+		return self.cart_total() + self.delivery_charge()
 
 
 	def __len__(self):

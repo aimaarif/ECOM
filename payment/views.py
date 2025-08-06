@@ -109,9 +109,17 @@ def process_order(request):
 		# Gather Order Info
 		full_name = my_shipping['shipping_full_name']
 		email = my_shipping['shipping_email']
+		
+		# Handle empty or None shipping_address2
+		address2 = my_shipping.get('shipping_address2', '')
+		if address2 is None or address2 == '' or address2 == 'None':
+			address2 = ''
+		else:
+			address2 = f"{address2}\n"
+			
 		# Create Shipping Address from session info
-		shipping_address = f"{my_shipping['shipping_address1']}\n{my_shipping['shipping_address2']}\n{my_shipping['shipping_city']}\n{my_shipping['shipping_state']}\n{my_shipping['shipping_zipcode']}\n{my_shipping['shipping_country']}"
-		amount_paid = totals
+		shipping_address = f"{my_shipping['shipping_address1']}\n{address2}{my_shipping['shipping_city']}\n{my_shipping['shipping_state']}\n{my_shipping['shipping_zipcode']}\n{my_shipping['shipping_country']}"
+		amount_paid = total_with_delivery
 
 		# Create an Order
 		if request.user.is_authenticated:
@@ -211,6 +219,8 @@ def billing_info(request):
 		cart_products = cart.get_prods
 		quantities = cart.get_quants
 		totals = cart.cart_total()
+		delivery_charge = cart.delivery_charge()
+		total_with_delivery = cart.total_with_delivery()
 
 		# Create a session with Shipping Info
 		my_shipping = request.POST
@@ -220,18 +230,40 @@ def billing_info(request):
 		if request.user.is_authenticated:
 			# Get The Billing Form
 			billing_form = PaymentForm()
-			return render(request, "payment/billing_info.html", {"cart_products":cart_products, "quantities":quantities, "totals":totals, "shipping_info":request.POST, "billing_form":billing_form})
+			return render(request, "payment/billing_info.html", {
+				"cart_products":cart_products, 
+				"quantities":quantities, 
+				"totals":totals, 
+				"shipping_info":request.POST, 
+				"billing_form":billing_form,
+				"delivery_charge": delivery_charge,
+				"total_with_delivery": total_with_delivery
+			})
 
 		else:
 			# Not logged in
 			# Get The Billing Form
 			billing_form = PaymentForm()
-			return render(request, "payment/billing_info.html", {"cart_products":cart_products, "quantities":quantities, "totals":totals, "shipping_info":request.POST, "billing_form":billing_form})
-
+			return render(request, "payment/billing_info.html", {
+				"cart_products":cart_products, 
+				"quantities":quantities, 
+				"totals":totals, 
+				"shipping_info":request.POST, 
+				"billing_form":billing_form,
+				"delivery_charge": delivery_charge,
+				"total_with_delivery": total_with_delivery
+			})
 
 		
 		shipping_form = request.POST
-		return render(request, "payment/billing_info.html", {"cart_products":cart_products, "quantities":quantities, "totals":totals, "shipping_form":shipping_form})	
+		return render(request, "payment/billing_info.html", {
+			"cart_products":cart_products, 
+			"quantities":quantities, 
+			"totals":totals, 
+			"shipping_form":shipping_form,
+			"delivery_charge": delivery_charge,
+			"total_with_delivery": total_with_delivery
+		})	
 	else:
 		messages.success(request, "Access Denied")
 		return redirect('home')
@@ -243,6 +275,8 @@ def checkout(request):
 	cart_products = cart.get_prods
 	quantities = cart.get_quants
 	totals = cart.cart_total()
+	delivery_charge = cart.delivery_charge()
+	total_with_delivery = cart.total_with_delivery()
 
 	if request.user.is_authenticated:
 		# Checkout as logged in user
@@ -250,11 +284,25 @@ def checkout(request):
 		shipping_user = ShippingAddress.objects.get(user__id=request.user.id)
 		# Shipping Form
 		shipping_form = ShippingForm(request.POST or None, instance=shipping_user)
-		return render(request, "payment/checkout.html", {"cart_products":cart_products, "quantities":quantities, "totals":totals, "shipping_form":shipping_form })
+		return render(request, "payment/checkout.html", {
+			"cart_products":cart_products, 
+			"quantities":quantities, 
+			"totals":totals, 
+			"shipping_form":shipping_form,
+			"delivery_charge": delivery_charge,
+			"total_with_delivery": total_with_delivery
+		})
 	else:
 		# Checkout as guest
 		shipping_form = ShippingForm(request.POST or None)
-		return render(request, "payment/checkout.html", {"cart_products":cart_products, "quantities":quantities, "totals":totals, "shipping_form":shipping_form})
+		return render(request, "payment/checkout.html", {
+			"cart_products":cart_products, 
+			"quantities":quantities, 
+			"totals":totals, 
+			"shipping_form":shipping_form,
+			"delivery_charge": delivery_charge,
+			"total_with_delivery": total_with_delivery
+		})
 
 	
 
@@ -276,8 +324,16 @@ def cash_delivery(request):
             # Gather Order Info
             full_name = my_shipping['shipping_full_name']
             email = my_shipping['shipping_email']
-            shipping_address = f"{my_shipping['shipping_address1']}\n{my_shipping['shipping_address2']}\n{my_shipping['shipping_city']}\n{my_shipping['shipping_state']}\n{my_shipping['shipping_zipcode']}\n{my_shipping['shipping_country']}"
-            amount_paid = totals
+            
+            # Handle empty or None shipping_address2
+            address2 = my_shipping.get('shipping_address2', '')
+            if address2 is None or address2 == '' or address2 == 'None':
+                address2 = ''
+            else:
+                address2 = f"{address2}\n"
+                
+            shipping_address = f"{my_shipping['shipping_address1']}\n{address2}{my_shipping['shipping_city']}\n{my_shipping['shipping_state']}\n{my_shipping['shipping_zipcode']}\n{my_shipping['shipping_country']}"
+            amount_paid = total_with_delivery
 
             # Create an Order
             if request.user.is_authenticated:
@@ -353,8 +409,16 @@ def process_payment_order(request):
                 # Gather Order Info
                 full_name = my_shipping['shipping_full_name']
                 email = my_shipping['shipping_email']
-                shipping_address = f"{my_shipping['shipping_address1']}\n{my_shipping['shipping_address2']}\n{my_shipping['shipping_city']}\n{my_shipping['shipping_state']}\n{my_shipping['shipping_zipcode']}\n{my_shipping['shipping_country']}"
-                amount_paid = totals
+                
+                # Handle empty or None shipping_address2
+                address2 = my_shipping.get('shipping_address2', '')
+                if address2 is None or address2 == '' or address2 == 'None':
+                    address2 = ''
+                else:
+                    address2 = f"{address2}\n"
+                    
+                shipping_address = f"{my_shipping['shipping_address1']}\n{address2}{my_shipping['shipping_city']}\n{my_shipping['shipping_state']}\n{my_shipping['shipping_zipcode']}\n{my_shipping['shipping_country']}"
+                amount_paid = total_with_delivery
 
                 # Create an Order
                 if request.user.is_authenticated:

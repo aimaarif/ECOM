@@ -10,7 +10,15 @@ def cart_summary(request):
 	cart_products = cart.get_prods
 	quantities = cart.get_quants
 	totals = cart.cart_total()
-	return render(request, "cart_summary.html", {"cart_products":cart_products, "quantities":quantities, "totals":totals})
+	delivery_charge = cart.delivery_charge()
+	total_with_delivery = cart.total_with_delivery()
+	return render(request, "cart_summary.html", {
+		"cart_products":cart_products, 
+		"quantities":quantities, 
+		"totals":totals,
+		"delivery_charge": delivery_charge,
+		"total_with_delivery": total_with_delivery
+	})
 
 
 

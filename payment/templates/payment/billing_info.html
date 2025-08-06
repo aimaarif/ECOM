@@ -1,101 +1,177 @@
 {% extends 'base.html' %}
 
-
 {% block content %}
-
-        <!-- Header-->
-        <header class="bg-dark py-5">
-            <div class="container px-4 px-lg-5 my-5">
-                <div class="text-center text-white">
-                    <h1 class="display-4 fw-bolder">Billing Info</h1>
-                    <p class="lead fw-normal text-white-50 mb-0">Enter Your Payment Info...</p>
-                </div>
-            </div>
-        </header>
-        <br/>
-        <div class="container">
-            <div class="row">
-                
-                    <div class="col-md-6 offset-md-3">
-          <div class="card">
-          <div class="card-header">
-            Order Summary
-          </div>
-          <div class="card-body">
-            {% for product in cart_products %}
-                {{ product.name }}: 
-                    {% if product.is_sale %}
-                        {{ product.sale_price }}pkr
-                    {% else %}
-                        {{ product.price }}pkr
-                {% endif %}
-
-                <br/>
-                <small>Quantity: 
-                {% for key, value in quantities.items %}
-                    {% if key == product.id|slugify %}
-                        {{ value }}
-                    {% endif %}
-                {% endfor %}</small>
-                <br/><br/>
-
-            {% endfor %}
-            Total:  {{ totals }}pkr
-            <br/><br/>
-            <a href="{% url 'cart_summary' %}" class="btn btn-sm btn-outline-secondary">Update Items</a>
-          </div>
-        </div>
-<br/><br/>
-<div class="card">
-  <div class="card-header">
-    Shipping Info
-  </div>
-  <div class="card-body">
-    
-    Name: {{ shipping_info.shipping_full_name }}<br/>
-    Email: {{ shipping_info.shipping_email }}<br/>
-    Address 1: {{ shipping_info.shipping_address1 }}<br/>
-    Address 2: {{ shipping_info.shipping_address2 }}<br/>
-    City: {{ shipping_info.shipping_city }}<br/>
-    State: {{ shipping_info.shipping_state }}<br/>
-    Zipcode: {{ shipping_info.shipping_zipcode }}<br/>
-    Country: {{ shipping_info.shipping_country }}<br/>
-    <br/>
-    <a href="{% url 'checkout' %}" class="btn btn-outline-secondary">Update Shipping</a>
-
-  </div>
-</div>
-<br/><br/>
-<form id="cod-form" method="post" action="{% url 'cash_delivery' %}">
-  {% csrf_token %}
-  <div class="card">
-      <div class="card-header">Cash on Delivery</div>
-      <div style="padding: 10px;">If you want cash on delivery, click button below to place your order.</div>
-      <div style="padding: 10px !important;"><button style="width: 120px !important;" type="submit" class="btn btn-secondary">Place Order</button></div>
-  </div>
- 
-</form>
-<br><br>
-<div class="card">
-  <div class="card-header">
-    Online payment 
-  </div>
-  <div class="card-body">
-    Payment Info: 030XXXXXXXXXX <br> Account Name: XXXX XXXX
-    <br><br>
-    <form method="POST" action="{% url 'process_payment_order' %}" enctype="multipart/form-data">
-      {% csrf_token %}
-    {{ billing_form.as_p }}
-    <br/>
-<button type="submit" class="btn btn-secondary">
-  Place Order
-</button>
-  </div>
-</div>
-
-</form>
-<br/><br/>
-            </div>
+<!-- Header-->
+<header class="bg-dark py-5">
+    <div class="container px-4 px-lg-5 my-5">
+        <div class="text-center text-white">
+            <h1 class="display-4 fw-bolder">Billing Info</h1>
+            <p class="lead fw-normal text-white-50 mb-0">Complete your order in two easy steps</p>
         </div>
     </div>
+</header>
+<br/>
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <!-- Order Summary -->
+            <div class="card mb-4 shadow-sm">
+                <div class="card-header bg-secondary text-white">
+                    <i class="bi bi-bag-check"></i> Order Summary
+                </div>
+                <div class="card-body">
+                    {% for product in cart_products %}
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <div>
+                                <strong>{{ product.name }}</strong>
+                                <br/>
+                                <small>Quantity: 
+                                    {% for key, value in quantities.items %}
+                                        {% if key == product.id|slugify %}
+                                            {{ value }}
+                                        {% endif %}
+                                    {% endfor %}
+                                </small>
+                            </div>
+                            <div>
+                                {% if product.is_sale %}
+                                    <span class="text-success">{{ product.sale_price }} PKR</span>
+                                {% else %}
+                                    <span>{{ product.price }} PKR</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    {% endfor %}
+                    <hr/>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Subtotal:</span>
+                        <span>{{ totals }} PKR</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Delivery Charge:</span>
+                        <span>
+                            {% if delivery_charge == 0 %}
+                                <span class="text-success">FREE</span>
+                            {% else %}
+                                {{ delivery_charge }} PKR
+                            {% endif %}
+                        </span>
+                    </div>
+                    <hr/>
+                    <div class="d-flex justify-content-between">
+                        <strong>Total:</strong>
+                        <strong>{{ total_with_delivery }} PKR</strong>
+                    </div>
+                    {% if delivery_charge > 0 %}
+                        <small class="text-muted">
+                            {% if totals < 5000 %}
+                                Spend {{ 5000|add:"-1"|add:"-"|add:totals }} PKR more for 50% off delivery
+                            {% elif totals < 10000 %}
+                                Spend {{ 10000|add:"-1"|add:"-"|add:totals }} PKR more for free delivery
+                            {% endif %}
+                        </small>
+                    {% endif %}
+                    <a href="{% url 'cart_summary' %}" class="btn btn-sm btn-outline-secondary mt-2">Update Items</a>
+                </div>
+            </div>
+            <!-- Shipping Info -->
+            <div class="card mb-4 shadow-sm">
+                <div class="card-header bg-secondary text-white">
+                    <i class="bi bi-truck"></i> Shipping Info
+                </div>
+                <div class="card-body">
+                    <div><strong>Name:</strong> {{ shipping_info.shipping_full_name }}</div>
+                    <div><strong>Email:</strong> {{ shipping_info.shipping_email }}</div>
+                    <div><strong>Address 1:</strong> {{ shipping_info.shipping_address1 }}</div>
+                    <div><strong>Address 2:</strong> {{ shipping_info.shipping_address2 }}</div>
+                    <div><strong>City:</strong> {{ shipping_info.shipping_city }}</div>
+                    <div><strong>State:</strong> {{ shipping_info.shipping_state }}</div>
+                    <div><strong>Zipcode:</strong> {{ shipping_info.shipping_zipcode }}</div>
+                    <div><strong>Country:</strong> {{ shipping_info.shipping_country }}</div>
+                    <a href="{% url 'checkout' %}" class="btn btn-outline-secondary btn-sm mt-2">Update Shipping</a>
+                </div>
+            </div>
+            <!-- Payment Method Selection -->
+            <div class="card mb-4 shadow-sm">
+                <div class="card-header bg-secondary text-white">
+                    <i class="bi bi-credit-card"></i> Choose Payment Method
+                </div>
+                <div class="card-body">
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="paymentMethod" id="codOption" value="cod" checked>
+                        <label class="form-check-label" for="codOption">
+                            <i class="bi bi-cash-coin"></i> Cash on Delivery (Advance 300 PKR required)
+                        </label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="paymentMethod" id="onlineOption" value="online">
+                        <label class="form-check-label" for="onlineOption">
+                            <i class="bi bi-wallet2"></i> Full Online Payment
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <!-- COD Advance Payment Form -->
+            <form id="codAdvanceForm" method="post" action="{% url 'cash_delivery' %}">
+                {% csrf_token %}
+                <div class="card mb-4 shadow-sm">
+                    <div class="card-header bg-secondary text-dark">
+                        <i class="bi bi-exclamation-circle"></i> Cash on Delivery - Advance Payment
+                    </div>
+                    <div class="card-body">
+                        <p class="mb-2">To confirm your Cash on Delivery order, please pay a 300 PKR advance online. The <div class="alert alert-info">
+                          <strong>Payment Method 1:</strong> 03457708992 (Easypaisa) <br> <strong>Payment Method 2:</strong> 03007979577 (Jazzcash) <br> <strong>Account Name:</strong> Azhar Mehmood                      </div>remaining amount will be paid on delivery.</p>
+
+                        <div class="mb-3">
+                            <label for="advancePaymentProof" class="form-label">Upload Advance Payment Proof (screenshot/receipt):</label>
+                            <input class="form-control" type="file" id="advancePaymentProof" name="advance_payment_proof" required>
+                        </div>
+                        <button type="submit" class="btn btn-secondary w-100">Pay 300 PKR Advance & Place COD Order</button>
+                    </div>
+                </div>
+            </form>
+            <!-- Full Online Payment Form -->
+            <form id="onlinePaymentForm" method="POST" action="{% url 'process_payment_order' %}" enctype="multipart/form-data" style="display:none;">
+                {% csrf_token %}
+                <div class="card mb-4 shadow-sm">
+                    <div class="card-header bg-secondary text-white">
+                        <i class="bi bi-wallet2"></i> Full Online Payment
+                    </div>
+                    <div class="card-body">
+                        <div class="alert alert-info">
+                            <strong>Payment Method 1:</strong> 03457708992 (Easypaisa) <br> <strong>Payment Method 2:</strong> 03007979577 (Jazzcash) <br> <strong>Account Name:</strong> Azhar Mehmood  
+                        </div>
+                        {{ billing_form.as_p }}
+                        <button type="submit" class="btn btn-secondary w-100">Pay Full Amount & Place Order</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Bootstrap Icons CDN -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+<!-- Custom JS for Payment Method Toggle -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const codOption = document.getElementById('codOption');
+        const onlineOption = document.getElementById('onlineOption');
+        const codAdvanceForm = document.getElementById('codAdvanceForm');
+        const onlinePaymentForm = document.getElementById('onlinePaymentForm');
+
+        function togglePaymentForms() {
+            if (codOption.checked) {
+                codAdvanceForm.style.display = '';
+                onlinePaymentForm.style.display = 'none';
+            } else {
+                codAdvanceForm.style.display = 'none';
+                onlinePaymentForm.style.display = '';
+            }
+        }
+        codOption.addEventListener('change', togglePaymentForms);
+        onlineOption.addEventListener('change', togglePaymentForms);
+        togglePaymentForms();
+    });
+</script>
 {% endblock %}

@@ -1,90 +1,226 @@
 {% extends 'base.html' %}
 
-
 {% block content %}
 
-        <!-- Header-->
-        <header class="bg-dark py-5">
-            <div class="container px-4 px-lg-5 my-5">
-                <div class="text-center text-white">
-                    <h1 class="display-4 fw-bolder">Shop Now</h1>
-                    <p class="lead fw-normal text-white-50 mb-0">Find or Customize your favorite art products here.</p>
-                </div>
-            </div>
-        </header>
-        <!-- Section-->
-        <section class="py-5">
-
-            <div class="container px-4 px-lg-5 mt-5">
-            
-                <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
-                        
-                {% for product in products %}
-                    {% if product.is_sale %}
-                    
-                    <div class="col mb-5">
-                        <div class="card h-100">
-                            <!-- Sale badge-->
-                            <div class="badge bg-dark text-white position-absolute" style="top: 0.5rem; right: 0.5rem">Sale</div>
-
-                            <!-- Product image-->
-                            <img class="card-img-top" src="{{ product.image.url }}" alt="..." />
-                            <!-- Product details-->
-                            <div class="card-body p-4">
-                                <div class="text-center">
-                                    <!-- Product name-->
-                                    <h5 class="fw-bolder">{{ product.name }}</h5>
-                                    <!-- Sale -->
-                <div class="d-flex justify-content-center small text-warning mb-2">
-                <div class="bi-star-fill"></div>
-                &nbsp;&nbsp;Sale!&nbsp;&nbsp;
-                <div class="bi-star-fill"></div>
-                </div>
-
-                                    <!-- Product price-->
-                                    <strike>
-                                    {{ product.price }}pkr
-                                    </strike>
-                                    &nbsp;
-                                    {{ product.sale_price }}pkr
-                                </div>
-                            </div>
-                            <!-- Product actions-->
-                            <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
-    <div class="text-center">
-        <a class="btn btn-outline-dark mt-auto" href="{% url 'product' product.id  %}">View Product</a>
+<!-- Hero Section -->
+<header class="bg-dark py-5">
+    <div class="container px-4 px-lg-5 my-5">
+        <div class="text-center text-white">
+            <h1 class="display-4 fw-bolder">Welcome to MS Retail Complex</h1>
+            <p class="lead fw-normal text-white-50 mb-4">Discover premium watches, skincare essentials, and the latest electronics for your lifestyle</p>
+            <a href="{% url 'category_summary' %}" class="btn btn-outline-light btn-lg">Shop All Products</a>
+        </div>
     </div>
-                            </div>
-                        </div>
-                    </div>
+</header>
+<div class="container-fluid bg-warning py-2">
+    <div class="text-center fw-bold text-dark" style="letter-spacing:1px;">
+        Rs. 300 required in advance
+    </div>
+</div>
 
-
+<!-- Featured Categories Section -->
+<section class="py-5 bg-light">
+    <div class="container px-4 px-lg-5">
+        <div class="text-center mb-5">
+            <h2 class="fw-bolder">Shop by Category</h2>
+            <p class="text-muted">Explore our curated selection of watches, skincare, and electronics</p>
+        </div>
+        
+        <div class="row gx-4 gx-lg-5 row-cols-1 row-cols-md-2 row-cols-xl-3 justify-content-center">
+            {% for category in categories %}
+            <div class="col mb-4">
+                <div class="card h-100 shadow-sm hover-lift">
+                    {% if category.image %}
+                        <img class="card-img-top" src="{{ category.image.url }}" alt="{{ category.name }}" style="height: 200px; object-fit: cover;" />
                     {% else %}
+                        <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 200px;">
+                            <i class="bi bi-palette-fill text-secondary" style="font-size: 3rem;"></i>
+                        </div>
+                    {% endif %}
+                    <div class="card-body text-center p-4">
+                        <h5 class="card-title fw-bolder">{{ category.name }}</h5>
+                        <p class="card-text text-muted">Discover our {{ category.name|lower }} collection</p>
+                        <a href="{% url 'category' category.name %}" class="btn btn-outline-secondary">View Collection</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- Sale Products Section -->
+{% if products %}
+<section class="py-5">
+    <div class="container px-4 px-lg-5">
+        <div class="text-center mb-5">
+            <h2 class="fw-bolder">Special Offers</h2>
+            <p class="text-muted">Limited time deals on watches, skincare, and electronics</p>
+        </div>
+        
+        <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
+            {% for product in products %}
+                {% if product.is_sale %}
                 <div class="col mb-5">
-                        <div class="card h-100">
-                            <!-- Product image-->
-                            <img class="card-img-top" src="{{ product.image.url }}" alt="..." />
-                            <!-- Product details-->
-                            <div class="card-body p-4">
-                                <div class="text-center">
-                                    <!-- Product name-->
-                                    <h5 class="fw-bolder">{{ product.name }}</h5>
-                                    <!-- Product price-->
-                                    {{ product.price }}pkr
+                    <div class="card h-100 shadow-sm hover-lift">
+                        <!-- Sale badge-->
+                        <div class="badge bg-danger text-white position-absolute" style="top: 0.5rem; right: 0.5rem">
+                            <i class="bi bi-tag-fill"></i> SALE
+                        </div>
+
+                        <!-- Product image-->
+                        <img class="card-img-top" src="{{ product.image.url }}" alt="{{ product.name }}" style="height: 200px; object-fit: cover;" />
+                        
+                        <!-- Product details-->
+                        <div class="card-body p-4">
+                            <div class="text-center">
+                                <!-- Product name-->
+                                <h6 class="fw-bolder">{{ product.name }}</h6>
+                                
+                                <!-- Sale price -->
+                                <div class="d-flex justify-content-center align-items-center mb-2">
+                                    <span class="text-danger fw-bold fs-5">{{ product.sale_price }}pkr</span>
+                                    <small class="text-muted text-decoration-line-through ms-2">{{ product.price }}pkr</small>
                                 </div>
+                                
+                                <!-- Discount percentage -->
+                                {% widthratio product.price product.sale_price 100 as discount %}
+                                <small class="text-success">
+                                    <i class="bi bi-arrow-down"></i> 
+                                    {{ discount|add:"-100"|floatformat:0 }}% OFF
+                                </small>
                             </div>
-                            <!-- Product actions-->
-                            <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
-    <div class="text-center"><a class="btn btn-outline-dark mt-auto" href="{% url 'product' product.id %}">View Product</a></div>
+                        </div>
+                        
+                        <!-- Product actions-->
+                        <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
+                            <div class="text-center">
+                                <a class="btn btn-outline-danger mt-auto" href="{% url 'product' product.id %}">
+                                    <i class="bi bi-eye"></i> View Product
+                                </a>
                             </div>
                         </div>
                     </div>
+                </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
 
-                        {% endif %}
-                    {% endfor %}
+<!-- All Products Section -->
+<section class="py-5 bg-light">
+    <div class="container px-4 px-lg-5">
+        <div class="text-center mb-5">
+            <h2 class="fw-bolder">Latest Products</h2>
+            <p class="text-muted">Check out our newest arrivals in watches, skincare, and electronics</p>
+        </div>
+        
+        <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
+            {% for product in products %}
+                {% if not product.is_sale %}
+                <div class="col mb-5">
+                    <div class="card h-100 shadow-sm hover-lift">
+                        <!-- Product image-->
+                        <img class="card-img-top" src="{{ product.image.url }}" alt="{{ product.name }}" style="height: 200px; object-fit: cover;" />
+                        
+                        <!-- Product details-->
+                        <div class="card-body p-4">
+                            <div class="text-center">
+                                <!-- Product name-->
+                                <h6 class="fw-bolder">{{ product.name }}</h6>
+                                
+                                <!-- Product price-->
+                                <div class="fw-bold fs-5 text-secondary">{{ product.price }}pkr</div>
+                                
+                                <!-- Category -->
+                                <small class="text-muted">{{ product.category.name }}</small>
+                            </div>
+                        </div>
+                        
+                        <!-- Product actions-->
+                        <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
+                            <div class="text-center">
+                                <a class="btn btn-outline-dark mt-auto" href="{% url 'product' product.id %}">
+                                    <i class="bi bi-eye"></i> View Product
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+        
+        <!-- View All Products Button -->
+        <div class="text-center mt-5">
+            <a href="{% url 'category_summary' %}" class="btn btn-secondary btn-lg">
+                <i class="bi bi-grid"></i> View All Products
+            </a>
+        </div>
+    </div>
+</section>
 
-
+<!-- Features Section -->
+<section class="py-5">
+    <div class="container px-4 px-lg-5">
+        <div class="row gx-4 gx-lg-5 row-cols-1 row-cols-md-3 justify-content-center">
+            <div class="col mb-4 text-center">
+                <div class="mb-3">
+                    <i class="bi bi-truck text-secondary" style="font-size: 2.5rem;"></i>
+                </div>
+                <h5 class="fw-bolder">Free Shipping</h5>
+                <p class="text-muted">On orders over 1000pkr</p>
             </div>
-        </section>
+            <div class="col mb-4 text-center">
+                <div class="mb-3">
+                    <i class="bi bi-shield-check text-secondary" style="font-size: 2.5rem;"></i>
+                </div>
+                <h5 class="fw-bolder">Quality Guarantee</h5>
+                <p class="text-muted">30-day return policy on all products</p>
+            </div>
+            <div class="col mb-4 text-center">
+                <div class="mb-3">
+                    <i class="bi bi-headset text-secondary" style="font-size: 2.5rem;"></i>
+                </div>
+                <h5 class="fw-bolder">24/7 Support</h5>
+                <p class="text-muted">Get help anytime for your shopping needs</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+.hover-lift {
+    transition: transform 0.2s ease-in-out;
+}
+
+.hover-lift:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+}
+
+.card-img-top {
+    transition: transform 0.2s ease-in-out;
+}
+
+.card:hover .card-img-top {
+    transform: scale(1.05);
+}
+
+.badge {
+    font-size: 0.8rem;
+    padding: 0.5rem 0.75rem;
+}
+
+.btn {
+    transition: all 0.2s ease-in-out;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+}
+</style>
 
 {% endblock %}

@@ -12,6 +12,11 @@
                 </div>
             </div>
         </header>
+        <div class="container mt-4">
+            <div class="alert alert-info bg-warning text-center text-dark" role="alert">
+                Want to save your shipping info and cart for next time? <a href="{% url 'register' %}" class="alert-link text-dark">Register an account</a> or <a href="{% url 'login' %}" class="alert-link text-dark">log in</a> now!
+            </div>
+        </div>
         <br/>
         <div class="container">
         {% if cart_products %}
@@ -85,9 +90,41 @@
 
         	{% endfor %}
             <div align="right">
-            <h3>Total: {{ totals }}pkr</h3>
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Order Summary</h5>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Subtotal:</span>
+                        <span>{{ totals }}pkr</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Delivery Charge:</span>
+                        <span>
+                            {% if delivery_charge == 0 %}
+                                <span class="text-success">FREE</span>
+                            {% else %}
+                                {{ delivery_charge }}pkr
+                            {% endif %}
+                        </span>
+                    </div>
+                    <hr>
+                    <div class="d-flex justify-content-between">
+                        <strong>Total:</strong>
+                        <strong>{{ total_with_delivery }}pkr</strong>
+                    </div>
+                    {% if delivery_charge > 0 %}
+                        <small class="text-muted">
+                            {% if totals < 5000 %}
+                                Spend {{ 5000|add:"-1"|add:"-"|add:totals }}pkr more for 50% off delivery
+                            {% elif totals < 10000 %}
+                                Spend {{ 10000|add:"-1"|add:"-"|add:totals }}pkr more for free delivery
+                            {% endif %}
+                        </small>
+                    {% endif %}
+                </div>
+            </div>
+            <br/>
             <a href="{% url 'checkout' %}" class="btn btn-success">Checkout</a>
-
             </div>
             <br/><br/><br/>
         	{% else %}

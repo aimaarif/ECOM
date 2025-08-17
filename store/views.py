@@ -13,6 +13,23 @@ from django import forms
 from django.db.models import Q
 import json
 from cart.cart import Cart
+# views.py
+import os
+from django.conf import settings
+from django.http import FileResponse, HttpResponse
+from django.contrib.auth.decorators import user_passes_test
+
+@user_passes_test(lambda u: u.is_superuser)
+def download_sqlite(request):
+    db_path = os.path.join(settings.BASE_DIR, "db.sqlite3")
+    if not os.path.exists(db_path):
+        return HttpResponse("Database file not found.", status=404)
+
+    return FileResponse(
+        open(db_path, "rb"),
+        as_attachment=True,
+        filename="backup.sqlite3"
+    )
 
 
 def search(request):

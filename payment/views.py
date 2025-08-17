@@ -105,6 +105,11 @@ def process_order(request):
 		payment_form = PaymentForm(request.POST or None)
 		# Get Shipping Session Data
 		my_shipping = request.session.get('my_shipping')
+		
+		# Check if shipping data exists
+		if not my_shipping:
+			messages.error(request, "Shipping information not found. Please complete checkout first.")
+			return redirect('checkout')
 
 		# Gather Order Info
 		full_name = my_shipping['shipping_full_name']
@@ -322,6 +327,11 @@ def cash_delivery(request):
 
             # Get Shipping Session Data
             my_shipping = request.session.get('my_shipping')
+            
+            # Check if shipping data exists
+            if not my_shipping:
+                messages.error(request, "Shipping information not found. Please complete checkout first.")
+                return redirect('checkout')
 
             # Gather Order Info
             full_name = my_shipping['shipping_full_name']
@@ -409,6 +419,11 @@ def process_payment_order(request):
 
                 # Get Shipping Session Data
                 my_shipping = request.session.get('my_shipping')
+                
+                # Check if shipping data exists
+                if not my_shipping:
+                    messages.error(request, "Shipping information not found. Please complete checkout first.")
+                    return redirect('checkout')
 
                 # Gather Order Info
                 full_name = my_shipping['shipping_full_name']

@@ -2,14 +2,23 @@
 
 {% block content %}
 
+{% load static %}
 <!-- Hero Section -->
-<header class="bg-dark py-5">
-    <div class="container px-4 px-lg-5 my-5">
-        <div class="text-center text-white">
-            <h1 class="display-4 fw-bolder">Welcome to MS Retail Complex</h1>
-            <p class="lead fw-normal text-white-50 mb-4">Discover premium watches, skincare essentials, and the latest electronics for your lifestyle</p>
-            <a href="{% url 'category_summary' %}" class="btn btn-outline-light btn-lg">Shop All Products</a>
-        </div>
+<header class="bg-dark py-5 position-relative">
+    <!-- Background Video -->
+    <video autoplay muted loop playsinline class="bg-video">
+        <source src="media/video/vid1.mp4" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+
+    <!-- Overlay (optional, makes text easier to read) -->
+    <div class="overlay"></div>
+
+    <!-- Hero Content -->
+    <div class="container px-4 px-lg-5 my-5 position-relative text-center text-white pt-5 ">
+        <h1 class="display-4 fw-bolder">Welcome to MS Retail Complex</h1>
+        <p class="lead fw-normal text-white-50 mb-4">Discover premium watches, skincare essentials, and the latest electronics for your lifestyle</p>
+        <a href="{% url 'category_summary' %}" class="btn btn-outline-light btn-lg">Shop All Products</a>
     </div>
 </header>
 <div class="container-fluid bg-warning py-2">

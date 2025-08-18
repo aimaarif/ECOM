@@ -8160,37 +8160,13 @@ textarea.form-control-lg {
 }
 
 .bg-dark {
-    position: relative;
-    width: 100%;
-    height: 100vh; /* Full screen hero */
-    overflow: hidden;
+  --bs-bg-opacity: 1;
+  /*background-color: rgba(var(--bs-dark-rgb), var(--bs-bg-opacity))*/
+  background-image: url('../../media/img/Main.jpg') !important; /* Set your background image */
+  background-size: cover !important; /* Ensure the image covers the entire header */
+  background-position: center !important; /* Center the image */
+  background-repeat: no-repeat !important; 
 }
-
-.bg-video {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover; /* like background-size: cover */
-    z-index: -1; /* behind content */
-}
-
-.overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0,0,0,0.5); /* dark overlay for readability */
-    z-index: 0;
-}
-
-.bg-dark .container {
-    z-index: 1; /* content above video */
-    position: relative;
-}
-
 .bg-dark1 {
   --bs-bg-opacity: 1;
   background-color: rgba(var(--bs-dark-rgb), var(--bs-bg-opacity))
